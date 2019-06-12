@@ -1,6 +1,7 @@
 *.dbf
 *.shp
 *.shx
+*.sbx
 *.sbn
 *.prj
 *.xml
