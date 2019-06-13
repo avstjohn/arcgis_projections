@@ -1,7 +1,8 @@
+import sys
 import arcpy
 import os
 
-cwd = "C:/Users/Communityscience/Desktop/ShapefilesCopy"
+cwd = sys.argv[1]
 arcpy.env.workspace = cwd
 # arcpy.env.overwriteOutput = True
 
