@@ -7,10 +7,12 @@ arcpy.env.workspace = cwd
 # arcpy.env.overwriteOutput = True
 
 output_dir = cwd + "/Reprojected"
-output_cs_2930 = arcpy.SpatialReference(2930)
-transformation = "NAD_1927_To_NAD_1983_NADCON + NAD_1983_To_HARN_Wisconsin"
+cs_Project = int(sys.argv[2])
+output_cs_Project = arcpy.SpatialReference(cs_Project)
+transformation = sys.argv[3]
 
-output_cs_6609 = arcpy.SpatialReference(6609)
+cs_Define = int(sys.argv[4])
+output_cs_Define = arcpy.SpatialReference(cs_Define)
 
 # Walk through directories and grab files to be projected
 input_files = []

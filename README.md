@@ -1,2 +1,5 @@
 # uec_arcgis
-Python scripts for batch processing of projections of shapefiles and geodatabases in ArcGIS.
+Python script for batch processed GCS transformation via Project and Define Projection ArcGIS tools.
+
+Use:
+python <PARENT DIRECTORY OF FEATURE LAYERS AND CLASSES> <SR TO PROJECT TO> <SR TO DEFINE> <GEOGRAPHIC COORDINATE TRANSFORMATION>
