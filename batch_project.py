@@ -1,6 +1,7 @@
 import arcpy
 import os
 import sys
+from distutils.dir_util import copy_tree
 
 # cwd = "C:/Users/Communityscience/Desktop/Data"
 cwd = os.getcwd()
@@ -13,7 +14,7 @@ output_dir = cwd + "/Reprojected"
 cs_Project = int(sys.argv[1])
 output_cs_Project = arcpy.SpatialReference(cs_Project)
 
-# geographic corodinate system transformation law
+# geographic coordinate system transformation law
 # e.g., "NAD_1927_To_NAD_1983_NADCON + NAD_1983_To_HARN_Wisconsin"
 gcs_transformation = sys.argv[2]
 
@@ -28,7 +29,6 @@ for root, dirs, files in os.walk(cwd):
 		extension = name.split(".")[-1]
 		if (extension == "shp" or extension == "gdb"):
 			input_files.append(root + "/" + name)
-# print(input_files)
 
 # Run through list of files, project, and define
 for file in input_files:
@@ -38,8 +38,8 @@ for file in input_files:
 
 	fc_name = file.split("/")[-1]
 
-	# Project to spatial reference 2930
-	if sr_code == 2930 or sr_code == 6609:
+	# Project to SR 2930
+	if sr_code == cs_Project or sr_code == cs_Define:
 		print(file + " already in " + sr_name + ", Code = " + str(sr_code), "\n", "Skipping.", "\n")
 		continue
 	elif sr_name == "Unknown":
@@ -61,9 +61,19 @@ for file in input_files:
 								out_dataset=output_dir + "/" + fc_name,
 								out_coor_system=output_cs_Project)
 
-	# Define projection from SR 2930 -> 6609
-	if sr_code == 6609:
+	# Define Projection from SR 2930 -> 6609
+	if sr_code == cs_Define:
 		continue
 	else: # Catches any other spatial references
 		arcpy.DefineProjection_management(in_dataset=output_dir + "/" + fc_name,
 										coor_system=output_cs_Define)
+
+# Toy example 
+# Better way is probably to write layer to same directory with "_reprojected" appended
+# Go through and delete old layers
+# Remove "_reprojected" from name
+
+# Copy reprojected layers from output directory back to input directory
+source = output_dir
+destination = cwd + "/copy"
+copy_tree(source, destination)
