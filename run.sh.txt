@@ -1,0 +1,2 @@
+cd C:\Users\Communityscience\Desktop\Data
+python ..\arcgis_projections\batch_project.py 2930 "NAD_1927_To_NAD_1983_NADCON + NAD_1983_To_HARN_Wisconsin" 6609
