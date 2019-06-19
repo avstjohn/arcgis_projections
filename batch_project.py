@@ -49,21 +49,13 @@ for file in input_files:
 	elif sr_name == "Unknown":
 		logfile.write("Unknown SR for " + file, "\n")
 		input_cs = output_cs_Project
-		arcpy.Project_management(in_dataset=file,
-                                in_coor_system=input_cs,
-								out_dataset=output_dataset,
-								out_coor_system=output_cs_Project)
+		arcpy.Project_management(in_dataset=file, in_coor_system=input_cs, out_dataset=output_dataset, out_coor_system=output_cs_Project)
 	elif sr_name == "NAD_1927_StatePlane_Wisconsin_South_FIPS_4803":
 		logfile.write("Known SR for " + file + ": " + sr_name + ", Code = " + str(sr_code), "\n")
-		arcpy.Project_management(in_dataset=file,
-								out_dataset=output_dataset,
-								out_coor_system=output_cs_Project,
-								transform_method=gcs_transformation)
+		arcpy.Project_management(in_dataset=file, out_dataset=output_dataset, out_coor_system=output_cs_Project, transform_method=gcs_transformation)
 	else: # Catches any other spatial references
 		logfile.write("Known SR for " + file + ": " + sr_name + ", Code = " + str(sr_code), "\n")
-		arcpy.Project_management(in_dataset=file,
-								out_dataset=output_dataset,
-								out_coor_system=output_cs_Project)
+		arcpy.Project_management(in_dataset=file, out_dataset=output_dataset, out_coor_system=output_cs_Project)
 	logfile.write("\n")
 
 	# Define Projection from SR 2930 -> 6609
@@ -71,8 +63,7 @@ for file in input_files:
 		continue
 	else: # Catches any other spatial references
 		logfile.write("Running Define Projection to PCSCode" + str(output_cs_Define) + " for " + output_dataset, "\n")
-		arcpy.DefineProjection_management(in_dataset=output_dataset,
-										coor_system=output_cs_Define)
+		arcpy.DefineProjection_management(in_dataset=output_dataset, coor_system=output_cs_Define)
 
 	os.remove(file)
 	os.rename(output_dataset, file)
