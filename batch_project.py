@@ -65,7 +65,9 @@ for file in input_files:
 		logfile.write("Running Define Projection to PCSCode" + str(output_cs_Define) + " for " + output_dataset, "\n")
 		arcpy.DefineProjection_management(in_dataset=output_dataset, coor_system=output_cs_Define)
 
+	logfile.write("Removing original " + file)
 	os.remove(file)
+	logfile.write("Renaming reprojected data " + output_dataset)
 	os.rename(output_dataset, file)
 
 logfile.close()
