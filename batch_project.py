@@ -69,5 +69,6 @@ for file in input_files:
 	os.remove(file)
 	logfile.write("Renaming reprojected data " + output_dataset)
 	os.rename(output_dataset, file)
+	# Make sure that all the auxiliary files are treated correctly!
 
 logfile.close()
