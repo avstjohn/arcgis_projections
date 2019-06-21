@@ -1,4 +1,4 @@
-import arcpy
+# import arcpy
 import os
 import sys
 from distutils.dir_util import copy_tree
@@ -8,8 +8,8 @@ cwd = os.getcwd()
 arcpy.env.workspace = cwd
 arcpy.env.overwriteOutput = True
 
-logfile = open(cwd, 'w+')
-logfile.write("Beginning reprojection of directory " + cwd + " and subdirectories.", "\n")
+logfile = open(cwd + "log.txt", 'w+')
+logfile.write("Beginning reprojection of directory " + cwd + " and subdirectories." + "\n")
 
 # coordinate system (spatial reference ID) to Project to (e.g., 2930)
 cs_Project = int(sys.argv[1])
@@ -38,23 +38,22 @@ for file in input_files:
 	sr_name = spatial_ref.PCSName
 	sr_code = spatial_ref.PCSCode
 
-	# fc_name = file.split("/")[-1]
 	output_dataset = file.split(".")[0] + "_Reprojected." + file.split(".")[-1]
 
-	# Project to SR 2930
-	logfile.write("Running Project to PCSCode " + str(output_cs_Project) + " for " + file, "\n")
+	Project to SR 2930
+	logfile.write("Running Project to PCSCode " + str(output_cs_Project) + " for " + file + "\n")
 	if sr_code == cs_Project or sr_code == cs_Define:
-		logfile.write(file + " already in " + sr_name + ", Code = " + str(sr_code), "\n", "Skipping.", "\n")
+		logfile.write(file + " already in " + sr_name + ", Code = " + str(sr_code) + "\n", "Skipping." + "\n")
 		continue
 	elif sr_name == "Unknown":
-		logfile.write("Unknown SR for " + file, "\n")
+		logfile.write("Unknown SR for " + file + "\n")
 		input_cs = output_cs_Project
 		arcpy.Project_management(in_dataset=file, in_coor_system=input_cs, out_dataset=output_dataset, out_coor_system=output_cs_Project)
 	elif sr_name == "NAD_1927_StatePlane_Wisconsin_South_FIPS_4803":
-		logfile.write("Known SR for " + file + ": " + sr_name + ", Code = " + str(sr_code), "\n")
+		logfile.write("Known SR for " + file + ": " + sr_name + ", Code = " + str(sr_code) + "\n")
 		arcpy.Project_management(in_dataset=file, out_dataset=output_dataset, out_coor_system=output_cs_Project, transform_method=gcs_transformation)
 	else: # Catches any other spatial references
-		logfile.write("Known SR for " + file + ": " + sr_name + ", Code = " + str(sr_code), "\n")
+		logfile.write("Known SR for " + file + ": " + sr_name + ", Code = " + str(sr_code) + "\n")
 		arcpy.Project_management(in_dataset=file, out_dataset=output_dataset, out_coor_system=output_cs_Project)
 	logfile.write("\n")
 
@@ -62,13 +61,24 @@ for file in input_files:
 	if sr_code == cs_Define:
 		continue
 	else: # Catches any other spatial references
-		logfile.write("Running Define Projection to PCSCode" + str(output_cs_Define) + " for " + output_dataset, "\n")
+		logfile.write("Running Define Projection to PCSCode" + str(output_cs_Define) + " for " + output_dataset + "\n")
 		arcpy.DefineProjection_management(in_dataset=output_dataset, coor_system=output_cs_Define)
 
-	logfile.write("Removing original " + file)
-	os.remove(file)
-	logfile.write("Renaming reprojected data " + output_dataset)
-	os.rename(output_dataset, file)
-	# Make sure that all the auxiliary files are treated correctly!
+	dbf = output_dataset.split('.')[0] + '.dbf'
+	prj = output_dataset.split('.')[0] + '.prj'
+	sbn = output_dataset.split('.')[0] + '.sbn'
+	sbx = output_dataset.split('.')[0] + '.sbx'
+	shp = output_dataset.split('.')[0] + '.shp'
+	shx = output_dataset.split('.')[0] + '.shx'
+
+	if os.path.isfile(dbf) and os.path.isfile(prj) and os.path.isfile(sbn) and os.path.isfile(sbx) and os.path.isfile(shp) and os.path.isfile(shx):
+		logfile.write("\n", "All files and auxiliary files accounted for!" + "\n")
+		logfile.write("Removing original data: " + file)
+		os.remove(file)
+		logfile.write("Renaming reprojected data: " + output_dataset)
+		os.rename(output_dataset, file)
+	else:
+		print("Files and auxiliary files not accounted for: " + output_dataset)
+		sys.exit()
 
 logfile.close()
